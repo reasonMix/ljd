@@ -963,7 +963,7 @@ def _unwarp_if_statement(start, body, end, topmost_end):
 			else:
 				assert else_warp_out.target == end
 		else:
-			print ("err: unwarper.py assert isinstance(else_warp_out, nodes.EndWarp), Block indices are unreliable while you are mangling them! P.S. Probably they should not be named indices... But they ARE used as indices during other phases. Sometimes.")
+			print ("err: unwarper.py assert isinstance(else_warp_out, nodes.UnconditionalWarp), Block indices are unreliable while you are mangling them! P.S. Probably they should not be named indices... But they ARE used as indices during other phases. Sometimes.")
 
 		_set_end(then_body[-1])
 		then_blocks = _unwarp_ifs(then_body, then_body[-1], topmost_end)
