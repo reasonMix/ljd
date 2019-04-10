@@ -19,8 +19,6 @@ class _State():
 		self.block_starts = {}
 
 	def _warp_in_block(self, addr):
-		#print (self.block_starts)
-		#print (addr)
 		block = self.block_starts[addr]
 		block.warpins_count += 1
 		return block
@@ -48,7 +46,6 @@ def _build_function_definition(prototype):
 		node.arguments.contents.append(nodes.Vararg())
 
 	instructions = prototype.instructions
-	#print (len(instructions))
 	node.statements.contents = _build_function_blocks(state, instructions)
 
 	return node
@@ -174,7 +171,7 @@ def _establish_warps(state, instructions):
 		start_addr = max(block.last_address - 1, block.first_address)
 
 		warp = instructions[start_addr:end_addr]
-		#print (block.first_address)
+
 		block.warp, shift = _build_warp(state, block.last_address, warp)
 
 		setattr(block, "_last_body_addr", block.last_address - shift)
@@ -189,7 +186,7 @@ def _establish_warps(state, instructions):
 
 def _build_warp(state, last_addr, instructions):
 	last = instructions[-1]
-	#print ("%x"%(last.opcode))
+
 	if last.opcode in (ins.JMP.opcode, ins.UCLO.opcode, ins.ISNEXT.opcode):
 		return _build_jump_warp(state, last_addr, instructions)
 
@@ -316,8 +313,7 @@ def _build_numeric_loop_warp(state, addr, instruction):
 		_build_slot(state, addr, base + 1),  # limit
 		_build_slot(state, addr, base + 2)  # step
 	]
-	#print ("%x" % instruction.A)
-	#print ("%x" %instruction.CD)
+
 	destination = get_jump_destination(addr, instruction)
 	warp.body = state._warp_in_block(destination)
 	warp.way_out = state._warp_in_block(addr + 1)
@@ -844,6 +840,15 @@ def _build_identifier(state, addr, slot, want_type):
 		if name is not None:
 			node.name = name
 			node.type = want_type
+	'''elif want_type == nodes.Identifier.T_LOCAL:
+		name = state.debuginfo.lookup_local_name(addr, slot)
+
+		if name is not None:
+			node.name = name
+			node.type = want_type
+		else:
+			node.name = "slot%d" % slot
+			node.type = want_type'''
 
 	return node
 
